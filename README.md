@@ -1,8 +1,8 @@
-# 🚀 Minha Primeira API com Spring Boot, Docker e MySQL
+# Minha Primeira API com Spring Boot, Docker e MySQL
 
 Este projeto é o marco inicial da minha jornada como desenvolvedor Backend Java. Ele consiste em uma API REST capaz de se comunicar com um banco de dados relacional rodando em um ambiente conteinerizado.
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 * **Java 17+** (Linguagem base)
 * **Spring Boot 4.0.4** (Framework para agilizar o desenvolvimento)
@@ -11,7 +11,7 @@ Este projeto é o marco inicial da minha jornada como desenvolvedor Backend Java
 * **MySQL 8.0** (Banco de dados relacional)
 * **Spring Data JPA** (Persistência de dados)
 
-## 🏗️ Arquitetura e Componentes
+## Arquitetura e Componentes
 
 ### 1. Camada de Controle (`RestController`)
 Implementei o `HelloController.java` utilizando a biblioteca `org.springframework.web`. Ele expõe o endpoint `/hello` que valida se o servidor está respondendo corretamente às requisições HTTP.
@@ -22,7 +22,7 @@ O arquivo `docker-compose.yml` isola o banco de dados. Configurei o mapeamento d
 ### 3. Persistência e Conexão
 No arquivo `application.properties`, configurei o driver `com.mysql.cj.jdbc.Driver` e a estratégia `update` do Hibernate, permitindo que o Spring crie tabelas automaticamente no banco conforme o código evolui.
 
-## 🚀 Como Executar o Projeto
+## Como Executar o Projeto
 
 1.  **Subir o banco de dados:**
     ```bash
@@ -36,4 +36,4 @@ No arquivo `application.properties`, configurei o driver `com.mysql.cj.jdbc.Driv
     `http://localhost:8080/hello`
 
 ---
-✨ *Projeto desenvolvido com foco em aprender a integração entre Java, Docker e Banco de Dados.*
+ *Projeto desenvolvido com foco em aprender a integração entre Java, Docker e Banco de Dados.*
