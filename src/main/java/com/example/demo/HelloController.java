@@ -2,7 +2,7 @@ package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam; // <-- ADICIONE ESTA LINHA
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
 public class HelloController {
 
     @Autowired
-    private UsuarioRepository repository; // "Injeta" a ponte para o banco
+    private UsuarioRepository repository;
 
     @GetMapping("/hello")
     public String hello() {
@@ -22,22 +22,32 @@ public class HelloController {
         Usuario novo = new Usuario();
         novo.setNome(nome);
         novo.setEmail(email);
-
         repository.save(novo);
-
         return "Sucesso! O usuário " + nome + " foi salvo com o e-mail " + email;
     }
 
     @GetMapping("/listar")
     public List<Usuario> listar() {
-        return repository.findAll(); // BUSCA TUDO DO BANCO!
+        return repository.findAll();
     }
+
+    // UPDATE: Atualiza o e-mail de um ID existente
+    @GetMapping("/atualizar")
+    public String atualizar(@RequestParam Long id, @RequestParam String novoEmail) {
+        return repository.findById(id).map(usuario -> {
+            usuario.setEmail(novoEmail);
+            repository.save(usuario);
+            return "Sucesso! O usuário " + usuario.getNome() + " agora tem o e-mail: " + novoEmail;
+        }).orElse("Erro: Usuário com ID " + id + " não encontrado.");
+    }
+
+    // DELETE REFINADO: Com tratamento de erro caso o ID não exista
     @GetMapping("/deletar")
     public String deletar(@RequestParam Long id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
-            return "Usuário com ID " + id + " foi removido com sucesso!";
+            return "Usuário com ID " + id + " removido com sucesso!";
         }
-        return "Erro: Usuário com ID " + id + " não encontrado.";
+        return "Erro: Não foi possível deletar. O ID " + id + " não existe no banco.";
     }
 }
