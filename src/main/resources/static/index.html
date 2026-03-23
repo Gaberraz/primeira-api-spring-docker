@@ -2,45 +2,112 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Meu Gerenciador Spring</title>
+    <title>Gerenciador de Usuários - Spring + Docker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* CSS de segurança caso o link acima falhe */
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; padding-top: 40px; }
+        .card { border-radius: 12px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .card-header { background-color: #0d6efd !important; color: white; border-radius: 12px 12px 0 0 !important; }
+        .btn-success { background-color: #198754; border: none; font-weight: bold; }
+        .btn-excluir { color: #dc3545; cursor: pointer; border: 1px solid #dc3545; padding: 2px 8px; border-radius: 4px; background: none; transition: 0.3s; }
+        .btn-excluir:hover { background-color: #dc3545; color: white; }
+    </style>
 </head>
-<body class="bg-light">
-<div class="container mt-5">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h2 class="mb-0">Usuários no Banco de Dados (MySQL)</h2>
-        </div>
-        <div class="card-body">
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>E-mail</th>
-                </tr>
-                </thead>
-                <tbody id="tabela-corpo">
-                </tbody>
-            </table>
-            <button onclick="carregarUsuarios()" class="btn btn-outline-primary">Atualizar Lista</button>
+<body class="container">
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h4 class="card-title mb-3 text-primary">➕ Novo Cadastro</h4>
+        <div class="row g-3">
+            <div class="col-md-5">
+                <input type="text" id="nome" class="form-control" placeholder="Nome Completo">
+            </div>
+            <div class="col-md-5">
+                <input type="email" id="email" class="form-control" placeholder="E-mail (ex: nome@email.com)">
+            </div>
+            <div class="col-md-2">
+                <button onclick="criarUsuario()" class="btn btn-success w-100">Adicionar</button>
+            </div>
         </div>
     </div>
 </div>
 
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">👥 Usuários Cadastrados</h5>
+        <button onclick="carregarUsuarios()" class="btn btn-sm btn-light">🔄 Atualizar Tabela</button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+            <tr>
+                <th class="ps-3">ID</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th class="text-center">Ações</th>
+            </tr>
+            </thead>
+            <tbody id="tabela-corpo">
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <script>
+    // Função para BUSCAR e LISTAR usuários
     function carregarUsuarios() {
         fetch('/listar')
             .then(res => res.json())
             .then(dados => {
                 const corpo = document.getElementById('tabela-corpo');
-                corpo.innerHTML = ''; // Limpa a tabela antes de carregar
+                corpo.innerHTML = '';
                 dados.forEach(u => {
-                    corpo.innerHTML += `<tr><td>${u.id}</td><td>${u.nome}</td><td>${u.email}</td></tr>`;
+                    corpo.innerHTML += `
+                            <tr>
+                                <td class="ps-3"><strong>#${u.id}</strong></td>
+                                <td>${u.nome}</td>
+                                <td>${u.email}</td>
+                                <td class="text-center">
+                                    <button onclick="deletarUsuario(${u.id})" class="btn-excluir">Excluir</button>
+                                </td>
+                            </tr>`;
                 });
+            })
+            .catch(err => console.error("Erro ao carregar:", err));
+    }
+
+    // Função para CRIAR novo usuário
+    function criarUsuario() {
+        const nomeInput = document.getElementById('nome');
+        const emailInput = document.getElementById('email');
+
+        if(!nomeInput.value || !emailInput.value) {
+            return alert("Por favor, preencha todos os campos!");
+        }
+
+        // Faz a chamada para a sua rota /criar do Spring
+        fetch(`/criar?nome=${nomeInput.value}&email=${emailInput.value}`)
+            .then(res => {
+                alert("Usuário salvo com sucesso!");
+                nomeInput.value = ''; // Limpa o campo nome
+                emailInput.value = ''; // Limpa o campo email
+                carregarUsuarios();    // Atualiza a tabela na hora
             });
     }
-    // Carrega assim que abrir a página
+
+    // Função para DELETAR usuário
+    function deletarUsuario(id) {
+        if(confirm("Tem certeza que deseja remover o usuário " + id + "?")) {
+            fetch('/deletar?id=' + id)
+                .then(() => {
+                    carregarUsuarios(); // Recarrega a lista
+                });
+        }
+    }
+
+    // Inicia a tabela assim que a página abre
     carregarUsuarios();
 </script>
 </body>
