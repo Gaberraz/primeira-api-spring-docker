@@ -36,4 +36,21 @@ No arquivo `application.properties`, configurei o driver `com.mysql.cj.jdbc.Driv
     `http://localhost:8080/hello`
 
 ---
+
+## Novas Tecnologias e Ferramentas
+* **Spring Data JPA**: Para salvar e buscar dados no banco sem escrever SQL.
+* **MySQL 8.0**: Banco de dados real rodando via Docker.
+* **Docker Compose**: Para subir o banco de dados com um único comando.
+
+## Novos Endpoints (Como usar)
+Agora a API aceita comandos dinâmicos pela URL:
+
+* **Listar tudo:** `http://localhost:8080/listar`
+* **Criar usuário:** `http://localhost:8080/criar?nome=SeuNome&email=seu@email.com`
+* **Deletar por ID:** `http://localhost:8080/deletar?id=1`
+
+## Como subir o Banco de Dados
+Se for rodar o projeto do zero, não esqueça de subir o container:
+```bash
+docker-compose up -d
  *Projeto desenvolvido com foco em aprender a integração entre Java, Docker e Banco de Dados.*
